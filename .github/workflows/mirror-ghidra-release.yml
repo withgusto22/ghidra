@@ -3,6 +3,9 @@ name: Mirror Official Ghidra 12.1.4 Release
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/mirror-ghidra-release.yml
 
 permissions:
   contents: write
