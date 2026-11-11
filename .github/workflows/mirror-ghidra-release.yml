@@ -30,6 +30,17 @@ jobs:
         run: |
           echo "$EXPECTED_SHA256  $ASSET" | sha256sum --check -
 
+      # Temporary transfer bridge so ChatGPT's GitHub artifact connector
+      # can retrieve the verified binary; no user upload is needed.
+      - name: Publish verified ZIP as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghidra-12.1.4-binary
+          path: ${{ env.ASSET }}
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+
       - name: Create release and upload distribution
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
