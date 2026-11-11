@@ -19,6 +19,9 @@ jobs:
       ASSET: ghidra_12.1.4_PUBLIC_20260921.zip
       DOWNLOAD_URL: https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.1.4_build/ghidra_12.1.4_PUBLIC_20260921.zip
       EXPECTED_SHA256: ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db
+      SH3_EXTENSION: ghidra_12.1.4_PUBLIC_20261105_SH3.zip
+      SH3_URL: https://github.com/aleph-void/Ghidra-Rare/releases/download/v1.1.0/ghidra_12.1.4_PUBLIC_20261105_SH3.zip
+      SH3_SHA256: 32ce1f52b5f1e17e6c8dc016259ad69530e0ebb55e698cab6aaab607dd57fd04
 
     steps:
       - name: Download official Ghidra distribution
@@ -32,6 +35,21 @@ jobs:
       - name: Verify official SHA-256
         run: |
           echo "$EXPECTED_SHA256  $ASSET" | sha256sum --check -
+
+      - name: Download SH-2E language extension
+        run: |
+          curl --fail --location --retry 5 --retry-delay 5 \
+            --output "$SH3_EXTENSION" "$SH3_URL"
+          echo "$SH3_SHA256  $SH3_EXTENSION" | sha256sum --check -
+
+      - name: Publish SH-2E language extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghidra-12.1.4-sh3-extension
+          path: ${{ env.SH3_EXTENSION }}
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
 
       # Split into two sub-512 MiB artifacts for the transfer connector.
       - name: Split verified ZIP for transfer
